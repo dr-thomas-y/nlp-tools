@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NLP 視覺次感元評估記錄表</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f2ed;
+    --paper: #fdfaf6;
+    --ink: #1c1c2e;
+    --deep: #2c2c4a;
+    --muted: #7a7a96;
+    --border: #ddd8cc;
+    --phase1-hue: #1a4a6b;
+    --phase1-light: #e8f2f9;
+    --phase1-mid: #3a7abd;
+    --phase2-hue: #6b1a3a;
+    --phase2-light: #f9e8f0;
+    --phase2-mid: #bd3a7a;
+    --gold: #b8963e;
+    --selected-bg: #1a4a6b;
+    --selected-text: #ffffff;
+    --tag-bg: #eef4fb;
+    --green: #2a6b4a;
+    --green-light: #e8f5ee;
+    --shadow: 0 2px 16px rgba(28,28,46,0.08);
+    --shadow-lg: 0 8px 40px rgba(28,28,46,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--ink);
+    color: white;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 40%;
+    background: linear-gradient(135deg, transparent 40%, rgba(58,122,189,0.15));
+    pointer-events: none;
+  }
+  .site-header::after {
+    content: 'NLP';
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 96px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -4px;
+    user-select: none;
+  }
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .site-header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    line-height: 1.3;
+  }
+  .site-header .subtitle {
+    margin-top: 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* Client info bar */
+  .client-bar {
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .client-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .client-field label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .client-field input {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    padding: 2px 8px 4px;
+    width: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .client-field input:focus { border-bottom-color: var(--phase1-mid); }
+
+  /* Main content */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 0;
+  }
+
+  /* Memory input */
+  .memory-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .memory-card .card-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .memory-card textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    resize: none;
+    outline: none;
+    min-height: 48px;
+    line-height: 1.7;
+    padding-bottom: 6px;
+    transition: border-color 0.2s;
+  }
+  .memory-card textarea:focus { border-bottom-color: var(--phase1-mid); }
+  .memory-card textarea::placeholder { color: var(--muted); font-weight: 300; }
+
+  /* Phase sections */
+  .phase-section {
+    margin-bottom: 36px;
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .phase-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: white;
+  }
+  .phase-number.p1 { background: var(--phase1-hue); }
+  .phase-number.p2 { background: var(--phase2-hue); }
+  .phase-title {
+    flex: 1;
+  }
+  .phase-title h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .phase-title p {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  /* Baseline score */
+  .baseline-row {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--phase2-hue);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow);
+  }
+  .baseline-row .bl-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--phase2-hue);
+    letter-spacing: 0.5px;
+  }
+  .baseline-row .bl-desc {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 1;
+  }
+  .score-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .score-input-wrap label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .score-input-wrap input[type="number"] {
+    width: 64px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--phase2-hue);
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--paper);
+  }
+  .score-input-wrap input[type="number"]:focus { border-color: var(--phase2-mid); }
+  .score-input-wrap .score-unit {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Item cards */
+  .items-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 680px) {
+    .items-grid { grid-template-columns: 1fr; }
+    .client-bar { padding: 16px 20px; }
+    .site-header { padding: 24px 20px; }
+    .main { padding: 20px 16px 0; }
+  }
+
+  .item-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px 16px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .item-card:hover { box-shadow: var(--shadow-lg); }
+  .item-card.phase1 { border-top: 3px solid var(--phase1-hue); }
+  .item-card.phase2 { border-top: 3px solid var(--phase2-hue); }
+  .item-card.phase2-adj { border-top: 3px solid var(--phase2-mid); }
+
+  .item-index {
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .item-index.p1 { color: var(--phase1-mid); }
+  .item-index.p2 { color: var(--phase2-mid); }
+
+  .item-card h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .item-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Option buttons */
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .opt-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    color: var(--deep);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .opt-btn:hover { border-color: var(--phase1-mid); background: var(--phase1-light); }
+  .opt-btn.selected.p1 {
+    background: var(--phase1-hue);
+    border-color: var(--phase1-hue);
+    color: white;
+    font-weight: 500;
+  }
+  .opt-btn.selected.p2 {
+    background: var(--phase2-hue);
+    border-color: var(--phase2-hue);
+    color: white;
+    font-weight: 500;
+  }
+  .opt-btn.na {
+    border-style: dashed;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .opt-btn.na.selected.p1 { background: var(--muted); border-color: var(--muted); color: white; }
+  .opt-btn.na.selected.p2 { background: var(--muted); border-color: var(--muted); color: white; }
+
+  /* Notes input within item card */
+  .item-note {
+    margin-top: 6px;
+  }
+  .item-note input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    background: transparent;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    padding: 3px 0 4px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .item-note input::placeholder { color: #bbb; }
+  .item-note input:focus { border-bottom-color: var(--phase1-mid); }
+  .item-note label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Phase 2 score adjustment row */
+  .score-adj-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .score-adj-row label {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .score-adj-row input[type="number"] {
+    width: 52px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--phase2-hue);
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none;
+    background: var(--paper);
+    transition: border-color 0.2s;
+  }
+  .score-adj-row input[type="number"]:focus { border-color: var(--phase2-mid); }
+  .delta-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: none;
+    white-space: nowrap;
+  }
+  .delta-badge.up { background: #e8f5ee; color: #2a6b4a; }
+  .delta-badge.down { background: #fce8e8; color: #6b2a2a; }
+  .delta-badge.same { background: var(--border); color: var(--muted); }
+
+  /* Key submodality result */
+  .key-result {
+    background: linear-gradient(135deg, var(--ink), var(--deep));
+    color: white;
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-top: 8px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .key-result::before {
+    content: '★';
+    position: absolute;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    color: rgba(184,150,62,0.12);
+    pointer-events: none;
+  }
+  .key-result-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .key-result h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: rgba(255,255,255,0.9);
+  }
+  .key-result-display {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px;
+    min-height: 42px;
+  }
+  .key-result .key-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 8px;
+    font-weight: 300;
+  }
+  .key-result-table {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .key-cell {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  .key-cell .kc-name { color: rgba(255,255,255,0.5); margin-bottom: 2px; font-size: 11px; }
+  .key-cell .kc-delta { font-weight: 700; font-size: 15px; }
+  .key-cell .kc-delta.up { color: #6ee7a0; }
+  .key-cell .kc-delta.down { color: #f87171; }
+  .key-cell .kc-delta.none { color: rgba(255,255,255,0.3); font-size: 12px; }
+
+  /* Print button */
+  .action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(253,250,246,0.95);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border);
+    padding: 12px 40px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-end;
+    z-index: 100;
+  }
+  .btn {
+    padding: 9px 22px;
+    border-radius: 6px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.15s;
+    border: none;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+  .btn-primary {
+    background: var(--ink);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--deep); }
+
+  .site-footer {
+    background: var(--ink);
+    color: rgba(255,255,255,0.35);
+    text-align: center;
+    padding: 18px 24px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    line-height: 1.9;
+    margin-top: 48px;
+    font-weight: 300;
+  }
+  .site-footer span { color: var(--gold); font-weight: 500; }
+
+  @media print {
+    .action-bar { display: none; }
+    body { padding-bottom: 0; background: white; }
+    .item-card { break-inside: avoid; box-shadow: none; }
+    .site-header, .site-footer { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-label">Neuro-Linguistic Programming</div>
+  <h1>視覺次感元評估記錄表</h1>
+  <div class="subtitle">Visual Submodalities Assessment · 兩階段導出與關鍵次感元識別</div>
+</header>
+
+<div class="client-bar">
+  <div class="client-field">
+    <label>個案姓名</label>
+    <input type="text" placeholder="姓名或代號">
+  </div>
+  <div class="client-field">
+    <label>評估日期</label>
+    <input type="date" id="dateField">
+  </div>
+  <div class="client-field">
+    <label>評估者</label>
+    <input type="text" placeholder="執行師姓名">
+  </div>
+  <div class="client-field">
+    <label>次數</label>
+    <input type="text" placeholder="第　次" style="width:80px;">
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Memory Input -->
+  <div class="memory-card">
+    <div class="card-label">評估目標 · 愉快回憶描述</div>
+    <textarea placeholder="請描述用於評估的愉快回憶內容（一段話即可）……" rows="2"></textarea>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="phase-section">
+    <div class="phase-header">
+      <div class="phase-number p1">一</div>
+      <div class="phase-title">
+        <h2>第一階段：導出視覺次感元</h2>
+        <p>依序詢問個案，記錄愉快回憶的原始視覺次感元狀態</p>
+      </div>
+    </div>
+
+    <div class="items-grid">
+
+      <!-- (a) 色彩 -->
+      <div class="item-card phase1" data-key="color">
+        <div class="item-index p1">A · 色彩</div>
+        <h3>色彩</h3>
+        <div class="item-desc">是彩色或是黑白？</div>
+        <div class="options" data-group="color" data-phase="p1">
+          <button class="opt-btn" data-val="彩色">彩色</button>
+          <button class="opt-btn" data-val="黑白">黑白</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="例：鮮豔、淡色……">
+        </div>
+      </div>
+
+      <!-- (b) 亮度 -->
+      <div class="item-card phase1" data-key="brightness">
+        <div class="item-index p1">B · 亮度</div>
+        <h3>亮度</h3>
+        <div class="item-desc">畫面比正常情況亮或是暗？</div>
+        <div class="options" data-group="brightness" data-phase="p1">
+          <button class="opt-btn" data-val="很亮">很亮</button>
+          <button class="opt-btn" data-val="偏亮">偏亮</button>
+          <button class="opt-btn" data-val="正常">正常</button>
+          <button class="opt-btn" data-val="偏暗">偏暗</button>
+          <button class="opt-btn" data-val="很暗">很暗</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (c) 焦點 -->
+      <div class="item-card phase1" data-key="focus">
+        <div class="item-index p1">C · 焦點</div>
+        <h3>焦點</h3>
+        <div class="item-desc">畫面非常清晰還是模糊？</div>
+        <div class="options" data-group="focus" data-phase="p1">
+          <button class="opt-btn" data-val="非常清晰">非常清晰</button>
+          <button class="opt-btn" data-val="清晰">清晰</button>
+          <button class="opt-btn" data-val="普通">普通</button>
+          <button class="opt-btn" data-val="模糊">模糊</button>
+          <button class="opt-btn" data-val="非常模糊">非常模糊</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (d) 畫面大小 -->
+      <div class="item-card phase1" data-key="size">
+        <div class="item-index p1">D · 畫面大小</div>
+        <h3>畫面大小</h3>
+        <div class="item-desc">畫面有多大？影像距離你是近或遠？</div>
+        <div class="options" data-group="size" data-phase="p1">
+          <button class="opt-btn" data-val="很大">很大</button>
+          <button class="opt-btn" data-val="中等">中等</button>
+          <button class="opt-btn" data-val="很小">很小</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0;">
+          <div style="display:flex;gap:5px;align-items:center;">
+            <span style="font-size:11px;color:var(--muted);">距離</span>
+            <button class="opt-btn" data-val="很近" data-group="size-dist" data-phase="p1">很近</button>
+            <button class="opt-btn" data-val="中等距離" data-group="size-dist" data-phase="p1">中等</button>
+            <button class="opt-btn" data-val="很遠" data-group="size-dist" data-phase="p1">很遠</button>
+          </div>
+        </div>
+        <div class="options">
+          <button class="opt-btn na" data-val="N/A" data-group="size" data-phase="p1">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="例：約全身高度、手臂長度……">
+        </div>
+      </div>
+
+      <!-- (e) 比例 -->
+      <div class="item-card phase1" data-key="ratio">
+        <div class="item-index p1">E · 比例</div>
+        <h3>比例</h3>
+        <div class="item-desc">畫面中人物與背景景物的相對大小比例</div>
+        <div class="options" data-group="ratio" data-phase="p1">
+          <button class="opt-btn" data-val="人比景物大">人比景物大</button>
+          <button class="opt-btn" data-val="人與景物一樣大">比例相同</button>
+          <button class="opt-btn" data-val="景物比人大">景物比人大</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (f) 次元 -->
+      <div class="item-card phase1" data-key="dimension">
+        <div class="item-index p1">F · 次元</div>
+        <h3>次元</h3>
+        <div class="item-desc">畫面是平面的？還是圍繞著你的立體感？</div>
+        <div class="options" data-group="dimension" data-phase="p1">
+          <button class="opt-btn" data-val="平面">平面（2D）</button>
+          <button class="opt-btn" data-val="立體">立體（3D）</button>
+          <button class="opt-btn" data-val="環繞">全景環繞</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (g) 播放速度 -->
+      <div class="item-card phase1" data-key="speed">
+        <div class="item-index p1">G · 播放速度</div>
+        <h3>播放速度</h3>
+        <div class="item-desc">連續動畫還是靜止畫面？若為動態，播放速度為何？</div>
+        <div class="options" data-group="speed" data-phase="p1">
+          <button class="opt-btn" data-val="靜止">靜止畫面</button>
+          <button class="opt-btn" data-val="慢速">慢速</button>
+          <button class="opt-btn" data-val="正常速度">正常速度</button>
+          <button class="opt-btn" data-val="快速">快速</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (h) 畫面屬性 -->
+      <div class="item-card phase1" data-key="stability">
+        <div class="item-index p1">H · 畫面屬性</div>
+        <h3>畫面屬性</h3>
+        <div class="item-desc">畫面穩定嗎？是否從某個方向移動進來？</div>
+        <div class="options" data-group="stability" data-phase="p1">
+          <button class="opt-btn" data-val="穩定">穩定</button>
+          <button class="opt-btn" data-val="不穩定">不穩定</button>
+          <button class="opt-btn" data-val="移動中">移動中</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>移動方向（若有）</label>
+          <input type="text" placeholder="例：由左向右、由上往下……">
+        </div>
+      </div>
+
+      <!-- (i) 結合與抽離 -->
+      <div class="item-card phase1" data-key="association">
+        <div class="item-index p1">I · 結合與抽離</div>
+        <h3>結合與抽離</h3>
+        <div class="item-desc">第一人稱視點（結合）？還是可看到自己在畫面中（抽離）？</div>
+        <div class="options" data-group="association" data-phase="p1">
+          <button class="opt-btn" data-val="結合（第一人稱）">結合（第一人稱）</button>
+          <button class="opt-btn" data-val="抽離（看到自己）">抽離（看到自己）</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+      <!-- (j) 畫面角度 -->
+      <div class="item-card phase1" data-key="angle">
+        <div class="item-index p1">J · 畫面角度</div>
+        <h3>畫面角度</h3>
+        <div class="item-desc">若為抽離狀態，從哪個方向看到自己？（若為結合狀態則不適用）</div>
+        <div class="options" data-group="angle" data-phase="p1">
+          <button class="opt-btn" data-val="前方">前方</button>
+          <button class="opt-btn" data-val="後方">後方</button>
+          <button class="opt-btn" data-val="左方">左方</button>
+          <button class="opt-btn" data-val="右方">右方</button>
+          <button class="opt-btn" data-val="斜上方">斜上方</button>
+          <button class="opt-btn" data-val="斜下方">斜下方</button>
+          <button class="opt-btn na" data-val="N/A">N/A（結合狀態）</button>
+        </div>
+        <div class="item-note">
+          <label>備註</label>
+          <input type="text" placeholder="具體描述……">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="phase-section">
+    <div class="phase-header">
+      <div class="phase-number p2">二</div>
+      <div class="phase-title">
+        <h2>第二階段：調整並尋找關鍵次感元</h2>
+        <p>逐一調整各次感元，記錄開心程度分數的變化，識別影響最大的關鍵項目</p>
+      </div>
+    </div>
+
+    <div class="baseline-row">
+      <div class="bl-label">基準分數設定</div>
+      <div class="bl-desc">請個案對愉快回憶的「開心程度」打分數，作為後續比較的基準</div>
+      <div class="score-input-wrap">
+        <label>基準分數</label>
+        <input type="number" id="baseScore" min="0" max="10" placeholder="8" step="1">
+        <span class="score-unit">/ 10 分</span>
+      </div>
+    </div>
+
+    <div class="items-grid">
+
+      <!-- Phase 2: 色彩 -->
+      <div class="item-card phase2-adj" data-key2="color">
+        <div class="item-index p2">A · 色彩調整</div>
+        <h3>色彩</h3>
+        <div class="item-desc">嘗試切換彩色↔黑白，觀察開心程度變化</div>
+        <div class="options" data-group="p2-color" data-phase="p2">
+          <button class="opt-btn" data-val="調成彩色">調成彩色</button>
+          <button class="opt-btn" data-val="調成黑白">調成黑白</button>
+          <button class="opt-btn" data-val="加深色彩飽和度">加深飽和</button>
+          <button class="opt-btn" data-val="降低色彩飽和度">降低飽和</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="color" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-color"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 亮度 -->
+      <div class="item-card phase2-adj" data-key2="brightness">
+        <div class="item-index p2">B · 亮度調整</div>
+        <h3>亮度</h3>
+        <div class="item-desc">嘗試調得更亮或更暗至極端，觀察開心程度變化</div>
+        <div class="options" data-group="p2-brightness" data-phase="p2">
+          <button class="opt-btn" data-val="調到最亮">調到最亮</button>
+          <button class="opt-btn" data-val="調亮一些">調亮一些</button>
+          <button class="opt-btn" data-val="調暗一些">調暗一些</button>
+          <button class="opt-btn" data-val="調到最暗">調到最暗</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="brightness" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-brightness"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 焦點 -->
+      <div class="item-card phase2-adj" data-key2="focus">
+        <div class="item-index p2">C · 焦點調整</div>
+        <h3>焦點</h3>
+        <div class="item-desc">嘗試調得更清晰或更模糊，觀察開心程度變化</div>
+        <div class="options" data-group="p2-focus" data-phase="p2">
+          <button class="opt-btn" data-val="調到極清晰">調到極清晰</button>
+          <button class="opt-btn" data-val="調清晰一些">調清晰一些</button>
+          <button class="opt-btn" data-val="調模糊一些">調模糊一些</button>
+          <button class="opt-btn" data-val="調到極模糊">調到極模糊</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="focus" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-focus"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 畫面大小 -->
+      <div class="item-card phase2-adj" data-key2="size">
+        <div class="item-index p2">D · 畫面大小調整</div>
+        <h3>畫面大小</h3>
+        <div class="item-desc">嘗試放大或縮小、拉近或推遠，觀察開心程度變化</div>
+        <div class="options" data-group="p2-size" data-phase="p2">
+          <button class="opt-btn" data-val="調到最大最近">最大最近</button>
+          <button class="opt-btn" data-val="放大拉近">放大拉近</button>
+          <button class="opt-btn" data-val="縮小推遠">縮小推遠</button>
+          <button class="opt-btn" data-val="調到最小最遠">最小最遠</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="size" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-size"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 比例 -->
+      <div class="item-card phase2-adj" data-key2="ratio">
+        <div class="item-index p2">E · 比例調整</div>
+        <h3>比例</h3>
+        <div class="item-desc">嘗試調整人物與景物的相對比例，觀察開心程度變化</div>
+        <div class="options" data-group="p2-ratio" data-phase="p2">
+          <button class="opt-btn" data-val="讓人物更大">讓人物更大</button>
+          <button class="opt-btn" data-val="讓人物更小">讓人物更小</button>
+          <button class="opt-btn" data-val="景物極大化">景物極大化</button>
+          <button class="opt-btn" data-val="回到等比">回到等比</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="ratio" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-ratio"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 次元 -->
+      <div class="item-card phase2-adj" data-key2="dimension">
+        <div class="item-index p2">F · 次元調整</div>
+        <h3>次元</h3>
+        <div class="item-desc">嘗試在平面與全景環繞之間切換，觀察開心程度變化</div>
+        <div class="options" data-group="p2-dimension" data-phase="p2">
+          <button class="opt-btn" data-val="調成平面">調成平面</button>
+          <button class="opt-btn" data-val="調成立體">調成立體</button>
+          <button class="opt-btn" data-val="調成全景環繞">全景環繞</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="dimension" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-dimension"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 播放速度 -->
+      <div class="item-card phase2-adj" data-key2="speed">
+        <div class="item-index p2">G · 播放速度調整</div>
+        <h3>播放速度</h3>
+        <div class="item-desc">嘗試加快或放慢至極端，觀察開心程度變化</div>
+        <div class="options" data-group="p2-speed" data-phase="p2">
+          <button class="opt-btn" data-val="定格靜止">定格靜止</button>
+          <button class="opt-btn" data-val="極慢速">極慢速</button>
+          <button class="opt-btn" data-val="正常速">正常速</button>
+          <button class="opt-btn" data-val="極快速">極快速</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="speed" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-speed"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 畫面屬性 -->
+      <div class="item-card phase2-adj" data-key2="stability">
+        <div class="item-index p2">H · 畫面屬性調整</div>
+        <h3>畫面屬性</h3>
+        <div class="item-desc">嘗試在穩定與不穩定之間切換，觀察開心程度變化</div>
+        <div class="options" data-group="p2-stability" data-phase="p2">
+          <button class="opt-btn" data-val="調成完全穩定">完全穩定</button>
+          <button class="opt-btn" data-val="調成輕微晃動">輕微晃動</button>
+          <button class="opt-btn" data-val="調成劇烈晃動">劇烈晃動</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="stability" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-stability"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 結合與抽離 -->
+      <div class="item-card phase2-adj" data-key2="association">
+        <div class="item-index p2">I · 結合╱抽離調整</div>
+        <h3>結合與抽離</h3>
+        <div class="item-desc">嘗試切換結合↔抽離狀態，觀察開心程度變化</div>
+        <div class="options" data-group="p2-association" data-phase="p2">
+          <button class="opt-btn" data-val="切換為結合">切換為結合</button>
+          <button class="opt-btn" data-val="切換為抽離">切換為抽離</button>
+          <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="association" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-association"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+      <!-- Phase 2: 畫面角度 -->
+      <div class="item-card phase2-adj" data-key2="angle">
+        <div class="item-index p2">J · 畫面角度調整</div>
+        <h3>畫面角度</h3>
+        <div class="item-desc">若為抽離，嘗試從不同方向觀察，觀察開心程度變化</div>
+        <div class="options" data-group="p2-angle" data-phase="p2">
+          <button class="opt-btn" data-val="從前方看">從前方看</button>
+          <button class="opt-btn" data-val="從後方看">從後方看</button>
+          <button class="opt-btn" data-val="從左方看">從左方看</button>
+          <button class="opt-btn" data-val="從右方看">從右方看</button>
+          <button class="opt-btn" data-val="從斜上方看">斜上方</button>
+          <button class="opt-btn" data-val="從斜下方看">斜下方</button>
+          <button class="opt-btn na" data-val="N/A">N/A（結合狀態）</button>
+        </div>
+        <div class="score-adj-row">
+          <label>調整後分數</label>
+          <input type="number" class="adj-score" data-key="angle" min="0" max="10" placeholder="—" step="1">
+          <span class="score-unit">/ 10</span>
+          <span class="delta-badge" id="delta-angle"></span>
+        </div>
+        <div class="item-note" style="margin-top:8px;">
+          <label>調整方向描述</label>
+          <input type="text" placeholder="記錄實際嘗試的調整……">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Key Submodality Result -->
+    <div class="key-result" style="margin-top:28px;" id="keyResult">
+      <div class="key-result-label">ANALYSIS RESULT · 分析結果</div>
+      <h3>關鍵次感元識別</h3>
+      <div class="key-result-display" id="keyDisplay">— 尚未輸入足夠資料 —</div>
+      <div class="key-note" id="keyNote">請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元</div>
+      <div class="key-result-table" id="keyTable"></div>
+    </div>
+
+    <!-- Overall notes -->
+    <div class="memory-card" style="margin-top:24px; border-left: 4px solid var(--gold);">
+      <div class="card-label">整體觀察與摘要</div>
+      <textarea placeholder="記錄本次評估的整體觀察、個案反應、後續建議方向……" rows="3"></textarea>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div><span>袁希博士、易樟發展師版權所有</span></div>
+  <div>全心策略 NLP 訓練中心專用</div>
+</footer>
+
+<div class="action-bar">
+  <button class="btn btn-outline" onclick="clearAll()">清除全部</button>
+  <button class="btn btn-outline" onclick="window.print()">列印 / 輸出 PDF</button>
+  <button class="btn btn-primary" onclick="calcKey()">計算關鍵次感元</button>
+</div>
+
+<script>
+  // Set today's date
+  document.getElementById('dateField').valueAsDate = new Date();
+
+  // Option button toggle (single select per group)
+  document.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const group = this.dataset.group || this.closest('.options')?.dataset.group;
+      const phase = this.dataset.phase || this.closest('.options')?.dataset.phase || 'p1';
+      if (!group) return;
+      // Deselect siblings in same group
+      document.querySelectorAll(`[data-group="${group}"]`).forEach(b => {
+        b.classList.remove('selected', 'p1', 'p2');
+      });
+      // Select this
+      this.classList.add('selected', phase);
+    });
+  });
+
+  // Delta calculation
+  const keyNames = {
+    color: '色彩', brightness: '亮度', focus: '焦點',
+    size: '畫面大小', ratio: '比例', dimension: '次元',
+    speed: '播放速度', stability: '畫面屬性',
+    association: '結合╱抽離', angle: '畫面角度'
+  };
+
+  function updateDelta(input) {
+    const key = input.dataset.key;
+    const badge = document.getElementById(`delta-${key}`);
+    if (!badge) return;
+    const base = parseFloat(document.getElementById('baseScore').value);
+    const adj = parseFloat(input.value);
+    if (isNaN(base) || isNaN(adj)) { badge.style.display = 'none'; return; }
+    const diff = adj - base;
+    badge.style.display = 'inline-block';
+    if (diff > 0) { badge.textContent = `+${diff} ↑`; badge.className = 'delta-badge up'; }
+    else if (diff < 0) { badge.textContent = `${diff} ↓`; badge.className = 'delta-badge down'; }
+    else { badge.textContent = '±0'; badge.className = 'delta-badge same'; }
+    calcKey();
+  }
+
+  document.querySelectorAll('.adj-score').forEach(input => {
+    input.addEventListener('input', () => updateDelta(input));
+  });
+  document.getElementById('baseScore').addEventListener('input', () => {
+    document.querySelectorAll('.adj-score').forEach(i => updateDelta(i));
+  });
+
+  function calcKey() {
+    const base = parseFloat(document.getElementById('baseScore').value);
+    if (isNaN(base)) return;
+
+    let maxAbs = -1, maxKey = null, results = [];
+
+    document.querySelectorAll('.adj-score').forEach(input => {
+      const key = input.dataset.key;
+      const adj = parseFloat(input.value);
+      if (!isNaN(adj)) {
+        const diff = adj - base;
+        results.push({ key, diff });
+        if (Math.abs(diff) > maxAbs) { maxAbs = Math.abs(diff); maxKey = key; }
+      }
+    });
+
+    const display = document.getElementById('keyDisplay');
+    const note = document.getElementById('keyNote');
+    const table = document.getElementById('keyTable');
+
+    if (results.length === 0) {
+      display.textContent = '— 尚未輸入足夠資料 —';
+      note.textContent = '請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元';
+      table.innerHTML = '';
+      return;
+    }
+
+    if (maxKey) {
+      const diff = results.find(r => r.key === maxKey).diff;
+      display.textContent = `${keyNames[maxKey]}（影響幅度：${diff > 0 ? '+' : ''}${diff} 分）`;
+      note.textContent = `此次感元的調整對個案的開心程度影響最顯著，建議優先以此項目設計介入策略`;
+    }
+
+    // Table of all results
+    results.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+    table.innerHTML = results.map(r => {
+      const cls = r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : 'none';
+      const arrow = r.diff > 0 ? '↑' : r.diff < 0 ? '↓' : '—';
+      return `<div class="key-cell">
+        <div class="kc-name">${keyNames[r.key]}</div>
+        <div class="kc-delta ${cls}">${r.diff > 0 ? '+' : ''}${r.diff} ${arrow}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function clearAll() {
+    if (!confirm('確定要清除所有已填寫的資料嗎？')) return;
+    document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected','p1','p2'));
+    document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = '');
+    document.getElementById('dateField').valueAsDate = new Date();
+    document.getElementById('keyDisplay').textContent = '— 尚未輸入足夠資料 —';
+    document.getElementById('keyNote').textContent = '請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元';
+    document.getElementById('keyTable').innerHTML = '';
+    document.querySelectorAll('.delta-badge').forEach(b => b.style.display = 'none');
+  }
+</script>
+</body>
+</html>
