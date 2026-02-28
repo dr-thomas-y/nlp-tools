@@ -17,14 +17,9 @@
     --phase1-light: #e8f2f9;
     --phase1-mid: #3a7abd;
     --phase2-hue: #6b1a3a;
-    --phase2-light: #f9e8f0;
+    --phase2-light: #f9e8f2;
     --phase2-mid: #bd3a7a;
     --gold: #b8963e;
-    --selected-bg: #1a4a6b;
-    --selected-text: #ffffff;
-    --tag-bg: #eef4fb;
-    --green: #2a6b4a;
-    --green-light: #e8f5ee;
     --shadow: 0 2px 16px rgba(28,28,46,0.08);
     --shadow-lg: 0 8px 40px rgba(28,28,46,0.14);
   }
@@ -39,7 +34,7 @@
     padding: 0 0 80px;
   }
 
-  /* Header */
+  /* ── Header ── */
   .site-header {
     background: var(--ink);
     color: white;
@@ -91,7 +86,7 @@
     letter-spacing: 1px;
   }
 
-  /* Client info bar */
+  /* ── Client bar ── */
   .client-bar {
     background: var(--paper);
     border-bottom: 1px solid var(--border);
@@ -127,14 +122,14 @@
   }
   .client-field input:focus { border-bottom-color: var(--phase1-mid); }
 
-  /* Main content */
+  /* ── Main ── */
   .main {
     max-width: 960px;
     margin: 0 auto;
     padding: 32px 24px 0;
   }
 
-  /* Memory input */
+  /* ── Memory card ── */
   .memory-card {
     background: var(--paper);
     border: 1px solid var(--border);
@@ -168,10 +163,8 @@
   .memory-card textarea:focus { border-bottom-color: var(--phase1-mid); }
   .memory-card textarea::placeholder { color: var(--muted); font-weight: 300; }
 
-  /* Phase sections */
-  .phase-section {
-    margin-bottom: 36px;
-  }
+  /* ── Phase header ── */
+  .phase-section { margin-bottom: 36px; }
   .phase-header {
     display: flex;
     align-items: center;
@@ -195,9 +188,7 @@
   }
   .phase-number.p1 { background: var(--phase1-hue); }
   .phase-number.p2 { background: var(--phase2-hue); }
-  .phase-title {
-    flex: 1;
-  }
+  .phase-title { flex: 1; }
   .phase-title h2 {
     font-family: 'Noto Serif TC', serif;
     font-size: 18px;
@@ -211,7 +202,7 @@
     font-weight: 300;
   }
 
-  /* Baseline score */
+  /* ── Baseline score ── */
   .baseline-row {
     background: var(--paper);
     border: 1px solid var(--border);
@@ -266,19 +257,12 @@
     color: var(--muted);
   }
 
-  /* Item cards */
+  /* ── Item grid & cards ── */
   .items-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
   }
-  @media (max-width: 680px) {
-    .items-grid { grid-template-columns: 1fr; }
-    .client-bar { padding: 16px 20px; }
-    .site-header { padding: 24px 20px; }
-    .main { padding: 20px 16px 0; }
-  }
-
   .item-card {
     background: var(--paper);
     border: 1px solid var(--border);
@@ -287,11 +271,9 @@
     box-shadow: var(--shadow);
     transition: box-shadow 0.2s;
     position: relative;
-    overflow: hidden;
   }
   .item-card:hover { box-shadow: var(--shadow-lg); }
-  .item-card.phase1 { border-top: 3px solid var(--phase1-hue); }
-  .item-card.phase2 { border-top: 3px solid var(--phase2-hue); }
+  .item-card.phase1  { border-top: 3px solid var(--phase1-hue); }
   .item-card.phase2-adj { border-top: 3px solid var(--phase2-mid); }
 
   .item-index {
@@ -318,7 +300,7 @@
     font-weight: 300;
   }
 
-  /* Option buttons */
+  /* ── Option buttons ── */
   .options {
     display: flex;
     flex-wrap: wrap;
@@ -338,8 +320,18 @@
     font-weight: 400;
     letter-spacing: 0.3px;
     white-space: nowrap;
+    user-select: none;
   }
-  .opt-btn:hover { border-color: var(--phase1-mid); background: var(--phase1-light); }
+  /* Phase 1 hover */
+  .item-card.phase1 .opt-btn:hover:not(.selected) {
+    border-color: var(--phase1-mid);
+    background: var(--phase1-light);
+  }
+  /* Phase 2 hover */
+  .item-card.phase2-adj .opt-btn:hover:not(.selected) {
+    border-color: var(--phase2-mid);
+    background: var(--phase2-light);
+  }
   .opt-btn.selected.p1 {
     background: var(--phase1-hue);
     border-color: var(--phase1-hue);
@@ -357,12 +349,111 @@
     color: var(--muted);
     font-size: 11px;
   }
-  .opt-btn.na.selected.p1 { background: var(--muted); border-color: var(--muted); color: white; }
-  .opt-btn.na.selected.p2 { background: var(--muted); border-color: var(--muted); color: white; }
+  .opt-btn.na.selected.p1 { background: var(--muted); border-color: var(--muted); color: white; border-style: solid; }
+  .opt-btn.na.selected.p2 { background: var(--muted); border-color: var(--muted); color: white; border-style: solid; }
 
-  /* Notes input within item card */
-  .item-note {
-    margin-top: 6px;
+  /* ── Phase 2 multi-score area ── */
+  .p2-scores-area {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .p2-scores-area:not(:empty) {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .score-multi-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    background: var(--phase2-light);
+    border: 1px solid rgba(189,58,122,0.15);
+    border-radius: 7px;
+    animation: rowSlideIn 0.18s ease-out;
+    transition: opacity 0.15s, transform 0.15s, background 0.2s, border-color 0.2s;
+  }
+  .score-multi-row.best {
+    background: rgba(107,26,58,0.1);
+    border-color: rgba(107,26,58,0.3);
+  }
+  .score-multi-row.removing {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  @keyframes rowSlideIn {
+    from { opacity: 0; transform: translateX(-8px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .smr-label {
+    font-size: 11px;
+    color: var(--phase2-hue);
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .smr-best-badge {
+    font-size: 9px;
+    color: var(--gold);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: none;
+    flex-shrink: 0;
+  }
+  .score-multi-row.best .smr-best-badge { display: inline; }
+
+  .score-multi-row input[type="number"] {
+    width: 52px;
+    border: 1.5px solid rgba(107,26,58,0.2);
+    border-radius: 6px;
+    padding: 3px 5px;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    color: var(--phase2-hue);
+    font-family: 'Noto Sans TC', sans-serif;
+    outline: none;
+    background: white;
+    transition: border-color 0.2s;
+    flex-shrink: 0;
+  }
+  .score-multi-row input[type="number"]:focus { border-color: var(--phase2-mid); }
+
+  .score-unit {
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Delta badge ── */
+  .delta-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    display: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .delta-badge.up   { background: #e8f5ee; color: #2a6b4a; }
+  .delta-badge.down { background: #fce8e8; color: #6b2a2a; }
+  .delta-badge.same { background: var(--border); color: var(--muted); }
+
+  /* ── Item note ── */
+  .item-note { margin-top: 10px; }
+  .item-note label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 2px;
   }
   .item-note input {
     width: 100%;
@@ -378,56 +469,8 @@
   }
   .item-note input::placeholder { color: #bbb; }
   .item-note input:focus { border-bottom-color: var(--phase1-mid); }
-  .item-note label {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 2px;
-  }
 
-  /* Phase 2 score adjustment row */
-  .score-adj-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px dashed var(--border);
-  }
-  .score-adj-row label {
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-  }
-  .score-adj-row input[type="number"] {
-    width: 52px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 6px;
-    font-size: 16px;
-    font-weight: 700;
-    text-align: center;
-    color: var(--phase2-hue);
-    font-family: 'Noto Sans TC', sans-serif;
-    outline: none;
-    background: var(--paper);
-    transition: border-color 0.2s;
-  }
-  .score-adj-row input[type="number"]:focus { border-color: var(--phase2-mid); }
-  .delta-badge {
-    font-size: 12px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 10px;
-    display: none;
-    white-space: nowrap;
-  }
-  .delta-badge.up { background: #e8f5ee; color: #2a6b4a; }
-  .delta-badge.down { background: #fce8e8; color: #6b2a2a; }
-  .delta-badge.same { background: var(--border); color: var(--muted); }
-
-  /* Key submodality result */
+  /* ── Key result panel ── */
   .key-result {
     background: linear-gradient(135deg, var(--ink), var(--deep));
     color: white;
@@ -445,7 +488,7 @@
     top: 50%;
     transform: translateY(-50%);
     font-size: 80px;
-    color: rgba(184,150,62,0.12);
+    color: rgba(184,150,62,0.1);
     pointer-events: none;
   }
   .key-result-label {
@@ -463,37 +506,62 @@
   }
   .key-result-display {
     font-family: 'Noto Serif TC', serif;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 700;
     color: var(--gold);
-    letter-spacing: 2px;
-    min-height: 42px;
+    letter-spacing: 1px;
+    min-height: 40px;
+    line-height: 1.3;
   }
   .key-result .key-note {
     font-size: 12px;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.45);
     margin-top: 8px;
     font-weight: 300;
+    line-height: 1.6;
   }
   .key-result-table {
-    margin-top: 16px;
+    margin-top: 18px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 8px;
   }
   .key-cell {
-    background: rgba(255,255,255,0.06);
-    border-radius: 6px;
-    padding: 8px 12px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 7px;
+    padding: 9px 12px;
     font-size: 12px;
   }
-  .key-cell .kc-name { color: rgba(255,255,255,0.5); margin-bottom: 2px; font-size: 11px; }
+  .key-cell .kc-name {
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 4px;
+    font-size: 11px;
+  }
+  .key-cell .kc-best-dir {
+    font-size: 10px;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
   .key-cell .kc-delta { font-weight: 700; font-size: 15px; }
-  .key-cell .kc-delta.up { color: #6ee7a0; }
+  .key-cell .kc-delta.up   { color: #6ee7a0; }
   .key-cell .kc-delta.down { color: #f87171; }
   .key-cell .kc-delta.none { color: rgba(255,255,255,0.3); font-size: 12px; }
+  .key-cell .kc-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .key-cell .kc-sub.up   { color: rgba(110,231,160,0.55); }
+  .key-cell .kc-sub.down { color: rgba(248,113,113,0.55); }
+  .kc-star { font-size: 9px; color: var(--gold); }
 
-  /* Print button */
+  /* ── Action bar ── */
   .action-bar {
     position: fixed;
     bottom: 0;
@@ -532,6 +600,7 @@
   }
   .btn-primary:hover { background: var(--deep); }
 
+  /* ── Footer ── */
   .site-footer {
     background: var(--ink);
     color: rgba(255,255,255,0.35);
@@ -544,6 +613,16 @@
     font-weight: 300;
   }
   .site-footer span { color: var(--gold); font-weight: 500; }
+
+  /* ── Responsive ── */
+  @media (max-width: 680px) {
+    .items-grid { grid-template-columns: 1fr; }
+    .client-bar { padding: 16px 20px; gap: 20px; }
+    .site-header { padding: 24px 20px; }
+    .main { padding: 20px 16px 0; }
+    .action-bar { padding: 10px 20px; }
+    .key-result { padding: 20px 20px; }
+  }
 
   @media print {
     .action-bar { display: none; }
@@ -588,20 +667,20 @@
     <textarea placeholder="請描述用於評估的愉快回憶內容（一段話即可）……" rows="2"></textarea>
   </div>
 
-  <!-- Phase 1 -->
+  <!-- ══ Phase 1 ══ -->
   <div class="phase-section">
     <div class="phase-header">
       <div class="phase-number p1">一</div>
       <div class="phase-title">
         <h2>第一階段：導出視覺次感元</h2>
-        <p>依序詢問個案，記錄愉快回憶的原始視覺次感元狀態</p>
+        <p>依序詢問個案，記錄愉快回憶的原始視覺次感元狀態（單選；再次點擊已選項目可取消）</p>
       </div>
     </div>
 
     <div class="items-grid">
 
-      <!-- (a) 色彩 -->
-      <div class="item-card phase1" data-key="color">
+      <!-- A 色彩 -->
+      <div class="item-card phase1">
         <div class="item-index p1">A · 色彩</div>
         <h3>色彩</h3>
         <div class="item-desc">是彩色或是黑白？</div>
@@ -616,8 +695,8 @@
         </div>
       </div>
 
-      <!-- (b) 亮度 -->
-      <div class="item-card phase1" data-key="brightness">
+      <!-- B 亮度 -->
+      <div class="item-card phase1">
         <div class="item-index p1">B · 亮度</div>
         <h3>亮度</h3>
         <div class="item-desc">畫面比正常情況亮或是暗？</div>
@@ -635,8 +714,8 @@
         </div>
       </div>
 
-      <!-- (c) 焦點 -->
-      <div class="item-card phase1" data-key="focus">
+      <!-- C 焦點 -->
+      <div class="item-card phase1">
         <div class="item-index p1">C · 焦點</div>
         <h3>焦點</h3>
         <div class="item-desc">畫面非常清晰還是模糊？</div>
@@ -654,8 +733,8 @@
         </div>
       </div>
 
-      <!-- (d) 畫面大小 -->
-      <div class="item-card phase1" data-key="size">
+      <!-- D 畫面大小 -->
+      <div class="item-card phase1">
         <div class="item-index p1">D · 畫面大小</div>
         <h3>畫面大小</h3>
         <div class="item-desc">畫面有多大？影像距離你是近或遠？</div>
@@ -667,9 +746,9 @@
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0;">
           <div style="display:flex;gap:5px;align-items:center;">
             <span style="font-size:11px;color:var(--muted);">距離</span>
-            <button class="opt-btn" data-val="很近" data-group="size-dist" data-phase="p1">很近</button>
+            <button class="opt-btn" data-val="很近"    data-group="size-dist" data-phase="p1">很近</button>
             <button class="opt-btn" data-val="中等距離" data-group="size-dist" data-phase="p1">中等</button>
-            <button class="opt-btn" data-val="很遠" data-group="size-dist" data-phase="p1">很遠</button>
+            <button class="opt-btn" data-val="很遠"    data-group="size-dist" data-phase="p1">很遠</button>
           </div>
         </div>
         <div class="options">
@@ -681,8 +760,8 @@
         </div>
       </div>
 
-      <!-- (e) 比例 -->
-      <div class="item-card phase1" data-key="ratio">
+      <!-- E 比例 -->
+      <div class="item-card phase1">
         <div class="item-index p1">E · 比例</div>
         <h3>比例</h3>
         <div class="item-desc">畫面中人物與背景景物的相對大小比例</div>
@@ -698,8 +777,8 @@
         </div>
       </div>
 
-      <!-- (f) 次元 -->
-      <div class="item-card phase1" data-key="dimension">
+      <!-- F 次元 -->
+      <div class="item-card phase1">
         <div class="item-index p1">F · 次元</div>
         <h3>次元</h3>
         <div class="item-desc">畫面是平面的？還是圍繞著你的立體感？</div>
@@ -715,8 +794,8 @@
         </div>
       </div>
 
-      <!-- (g) 播放速度 -->
-      <div class="item-card phase1" data-key="speed">
+      <!-- G 播放速度 -->
+      <div class="item-card phase1">
         <div class="item-index p1">G · 播放速度</div>
         <h3>播放速度</h3>
         <div class="item-desc">連續動畫還是靜止畫面？若為動態，播放速度為何？</div>
@@ -733,8 +812,8 @@
         </div>
       </div>
 
-      <!-- (h) 畫面屬性 -->
-      <div class="item-card phase1" data-key="stability">
+      <!-- H 畫面屬性 -->
+      <div class="item-card phase1">
         <div class="item-index p1">H · 畫面屬性</div>
         <h3>畫面屬性</h3>
         <div class="item-desc">畫面穩定嗎？是否從某個方向移動進來？</div>
@@ -750,8 +829,8 @@
         </div>
       </div>
 
-      <!-- (i) 結合與抽離 -->
-      <div class="item-card phase1" data-key="association">
+      <!-- I 結合與抽離 -->
+      <div class="item-card phase1">
         <div class="item-index p1">I · 結合與抽離</div>
         <h3>結合與抽離</h3>
         <div class="item-desc">第一人稱視點（結合）？還是可看到自己在畫面中（抽離）？</div>
@@ -766,8 +845,8 @@
         </div>
       </div>
 
-      <!-- (j) 畫面角度 -->
-      <div class="item-card phase1" data-key="angle">
+      <!-- J 畫面角度 -->
+      <div class="item-card phase1">
         <div class="item-index p1">J · 畫面角度</div>
         <h3>畫面角度</h3>
         <div class="item-desc">若為抽離狀態，從哪個方向看到自己？（若為結合狀態則不適用）</div>
@@ -789,13 +868,13 @@
     </div>
   </div>
 
-  <!-- Phase 2 -->
+  <!-- ══ Phase 2 ══ -->
   <div class="phase-section">
     <div class="phase-header">
       <div class="phase-number p2">二</div>
       <div class="phase-title">
         <h2>第二階段：調整並尋找關鍵次感元</h2>
-        <p>逐一調整各次感元，記錄開心程度分數的變化，識別影響最大的關鍵項目</p>
+        <p>可選擇多個調整方向，每個方向各自輸入分數；系統自動找出影響最大的方向（★ 標示最佳）</p>
       </div>
     </div>
 
@@ -811,11 +890,11 @@
 
     <div class="items-grid">
 
-      <!-- Phase 2: 色彩 -->
+      <!-- A 色彩 -->
       <div class="item-card phase2-adj" data-key2="color">
         <div class="item-index p2">A · 色彩調整</div>
         <h3>色彩</h3>
-        <div class="item-desc">嘗試切換彩色↔黑白，觀察開心程度變化</div>
+        <div class="item-desc">嘗試切換彩色↔黑白，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-color" data-phase="p2">
           <button class="opt-btn" data-val="調成彩色">調成彩色</button>
           <button class="opt-btn" data-val="調成黑白">調成黑白</button>
@@ -823,23 +902,18 @@
           <button class="opt-btn" data-val="降低色彩飽和度">降低飽和</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="color" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-color"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 亮度 -->
+      <!-- B 亮度 -->
       <div class="item-card phase2-adj" data-key2="brightness">
         <div class="item-index p2">B · 亮度調整</div>
         <h3>亮度</h3>
-        <div class="item-desc">嘗試調得更亮或更暗至極端，觀察開心程度變化</div>
+        <div class="item-desc">嘗試調得更亮或更暗至極端，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-brightness" data-phase="p2">
           <button class="opt-btn" data-val="調到最亮">調到最亮</button>
           <button class="opt-btn" data-val="調亮一些">調亮一些</button>
@@ -847,23 +921,18 @@
           <button class="opt-btn" data-val="調到最暗">調到最暗</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="brightness" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-brightness"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 焦點 -->
+      <!-- C 焦點 -->
       <div class="item-card phase2-adj" data-key2="focus">
         <div class="item-index p2">C · 焦點調整</div>
         <h3>焦點</h3>
-        <div class="item-desc">嘗試調得更清晰或更模糊，觀察開心程度變化</div>
+        <div class="item-desc">嘗試調得更清晰或更模糊，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-focus" data-phase="p2">
           <button class="opt-btn" data-val="調到極清晰">調到極清晰</button>
           <button class="opt-btn" data-val="調清晰一些">調清晰一些</button>
@@ -871,23 +940,18 @@
           <button class="opt-btn" data-val="調到極模糊">調到極模糊</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="focus" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-focus"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 畫面大小 -->
+      <!-- D 畫面大小 -->
       <div class="item-card phase2-adj" data-key2="size">
         <div class="item-index p2">D · 畫面大小調整</div>
         <h3>畫面大小</h3>
-        <div class="item-desc">嘗試放大或縮小、拉近或推遠，觀察開心程度變化</div>
+        <div class="item-desc">嘗試放大或縮小、拉近或推遠，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-size" data-phase="p2">
           <button class="opt-btn" data-val="調到最大最近">最大最近</button>
           <button class="opt-btn" data-val="放大拉近">放大拉近</button>
@@ -895,23 +959,18 @@
           <button class="opt-btn" data-val="調到最小最遠">最小最遠</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="size" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-size"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 比例 -->
+      <!-- E 比例 -->
       <div class="item-card phase2-adj" data-key2="ratio">
         <div class="item-index p2">E · 比例調整</div>
         <h3>比例</h3>
-        <div class="item-desc">嘗試調整人物與景物的相對比例，觀察開心程度變化</div>
+        <div class="item-desc">嘗試調整人物與景物的相對比例，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-ratio" data-phase="p2">
           <button class="opt-btn" data-val="讓人物更大">讓人物更大</button>
           <button class="opt-btn" data-val="讓人物更小">讓人物更小</button>
@@ -919,46 +978,36 @@
           <button class="opt-btn" data-val="回到等比">回到等比</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="ratio" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-ratio"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 次元 -->
+      <!-- F 次元 -->
       <div class="item-card phase2-adj" data-key2="dimension">
         <div class="item-index p2">F · 次元調整</div>
         <h3>次元</h3>
-        <div class="item-desc">嘗試在平面與全景環繞之間切換，觀察開心程度變化</div>
+        <div class="item-desc">嘗試在平面與全景環繞之間切換，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-dimension" data-phase="p2">
           <button class="opt-btn" data-val="調成平面">調成平面</button>
           <button class="opt-btn" data-val="調成立體">調成立體</button>
           <button class="opt-btn" data-val="調成全景環繞">全景環繞</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="dimension" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-dimension"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 播放速度 -->
+      <!-- G 播放速度 -->
       <div class="item-card phase2-adj" data-key2="speed">
         <div class="item-index p2">G · 播放速度調整</div>
         <h3>播放速度</h3>
-        <div class="item-desc">嘗試加快或放慢至極端，觀察開心程度變化</div>
+        <div class="item-desc">嘗試加快或放慢至極端，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-speed" data-phase="p2">
           <button class="opt-btn" data-val="定格靜止">定格靜止</button>
           <button class="opt-btn" data-val="極慢速">極慢速</button>
@@ -966,68 +1015,53 @@
           <button class="opt-btn" data-val="極快速">極快速</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="speed" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-speed"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 畫面屬性 -->
+      <!-- H 畫面屬性 -->
       <div class="item-card phase2-adj" data-key2="stability">
         <div class="item-index p2">H · 畫面屬性調整</div>
         <h3>畫面屬性</h3>
-        <div class="item-desc">嘗試在穩定與不穩定之間切換，觀察開心程度變化</div>
+        <div class="item-desc">嘗試在穩定與不穩定之間切換，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-stability" data-phase="p2">
           <button class="opt-btn" data-val="調成完全穩定">完全穩定</button>
           <button class="opt-btn" data-val="調成輕微晃動">輕微晃動</button>
           <button class="opt-btn" data-val="調成劇烈晃動">劇烈晃動</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="stability" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-stability"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 結合與抽離 -->
+      <!-- I 結合與抽離 -->
       <div class="item-card phase2-adj" data-key2="association">
         <div class="item-index p2">I · 結合╱抽離調整</div>
         <h3>結合與抽離</h3>
-        <div class="item-desc">嘗試切換結合↔抽離狀態，觀察開心程度變化</div>
+        <div class="item-desc">嘗試切換結合↔抽離狀態，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-association" data-phase="p2">
           <button class="opt-btn" data-val="切換為結合">切換為結合</button>
           <button class="opt-btn" data-val="切換為抽離">切換為抽離</button>
           <button class="opt-btn na" data-val="N/A">N/A 不適用</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="association" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-association"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
-      <!-- Phase 2: 畫面角度 -->
+      <!-- J 畫面角度 -->
       <div class="item-card phase2-adj" data-key2="angle">
         <div class="item-index p2">J · 畫面角度調整</div>
         <h3>畫面角度</h3>
-        <div class="item-desc">若為抽離，嘗試從不同方向觀察，觀察開心程度變化</div>
+        <div class="item-desc">若為抽離，嘗試從不同方向觀察，觀察開心程度變化（可多選）</div>
         <div class="options" data-group="p2-angle" data-phase="p2">
           <button class="opt-btn" data-val="從前方看">從前方看</button>
           <button class="opt-btn" data-val="從後方看">從後方看</button>
@@ -1037,26 +1071,21 @@
           <button class="opt-btn" data-val="從斜下方看">斜下方</button>
           <button class="opt-btn na" data-val="N/A">N/A（結合狀態）</button>
         </div>
-        <div class="score-adj-row">
-          <label>調整後分數</label>
-          <input type="number" class="adj-score" data-key="angle" min="0" max="10" placeholder="—" step="1">
-          <span class="score-unit">/ 10</span>
-          <span class="delta-badge" id="delta-angle"></span>
-        </div>
-        <div class="item-note" style="margin-top:8px;">
-          <label>調整方向描述</label>
-          <input type="text" placeholder="記錄實際嘗試的調整……">
+        <div class="p2-scores-area"></div>
+        <div class="item-note" style="margin-top:10px;">
+          <label>補充備註</label>
+          <input type="text" placeholder="記錄其他觀察……">
         </div>
       </div>
 
     </div>
 
-    <!-- Key Submodality Result -->
-    <div class="key-result" style="margin-top:28px;" id="keyResult">
+    <!-- Key Result -->
+    <div class="key-result" style="margin-top:28px;">
       <div class="key-result-label">ANALYSIS RESULT · 分析結果</div>
       <h3>關鍵次感元識別</h3>
       <div class="key-result-display" id="keyDisplay">— 尚未輸入足夠資料 —</div>
-      <div class="key-note" id="keyNote">請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元</div>
+      <div class="key-note" id="keyNote">請在第二階段選擇調整方向並輸入各方向分數，系統將自動計算影響最大的次感元</div>
       <div class="key-result-table" id="keyTable"></div>
     </div>
 
@@ -1081,25 +1110,9 @@
 </div>
 
 <script>
-  // Set today's date
+  // ── Init ──────────────────────────────────────────────
   document.getElementById('dateField').valueAsDate = new Date();
 
-  // Option button toggle (single select per group)
-  document.querySelectorAll('.opt-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const group = this.dataset.group || this.closest('.options')?.dataset.group;
-      const phase = this.dataset.phase || this.closest('.options')?.dataset.phase || 'p1';
-      if (!group) return;
-      // Deselect siblings in same group
-      document.querySelectorAll(`[data-group="${group}"]`).forEach(b => {
-        b.classList.remove('selected', 'p1', 'p2');
-      });
-      // Select this
-      this.classList.add('selected', phase);
-    });
-  });
-
-  // Delta calculation
   const keyNames = {
     color: '色彩', brightness: '亮度', focus: '焦點',
     size: '畫面大小', ratio: '比例', dimension: '次元',
@@ -1107,82 +1120,226 @@
     association: '結合╱抽離', angle: '畫面角度'
   };
 
-  function updateDelta(input) {
-    const key = input.dataset.key;
-    const badge = document.getElementById(`delta-${key}`);
-    if (!badge) return;
-    const base = parseFloat(document.getElementById('baseScore').value);
-    const adj = parseFloat(input.value);
+  // ── Phase 1: single-select with toggle ────────────────
+  //   Covers both buttons inside [data-phase="p1"] containers
+  //   AND buttons with inline data-phase="p1"
+  document.querySelectorAll(
+    '.options[data-phase="p1"] .opt-btn, .opt-btn[data-phase="p1"]'
+  ).forEach(btn => {
+    btn.addEventListener('click', function () {
+      const group = this.dataset.group || this.closest('.options')?.dataset.group;
+      if (!group) return;
+
+      if (this.classList.contains('selected')) {
+        // Already selected → toggle off
+        this.classList.remove('selected', 'p1');
+      } else {
+        // Deselect all in the same group, then select this
+        document.querySelectorAll(
+          `.options[data-group="${group}"] .opt-btn, .opt-btn[data-group="${group}"]`
+        ).forEach(b => b.classList.remove('selected', 'p1', 'p2'));
+        this.classList.add('selected', 'p1');
+      }
+    });
+  });
+
+  // ── Phase 2: multi-select with dynamic score rows ─────
+  document.querySelectorAll('.options[data-phase="p2"] .opt-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const optionsEl  = this.closest('.options');
+      const group      = optionsEl.dataset.group;
+      const card       = this.closest('.item-card');
+      const key        = card.dataset.key2;
+      const scoresArea = card.querySelector('.p2-scores-area');
+      const val        = this.dataset.val;
+      const isNA       = this.classList.contains('na');
+
+      if (this.classList.contains('selected')) {
+        // ── Toggle OFF ──
+        this.classList.remove('selected', 'p2');
+        if (!isNA) removeScoreRow(scoresArea, val);
+      } else {
+        // ── Toggle ON ──
+        if (isNA) {
+          // N/A: clear all other active buttons and their score rows
+          optionsEl.querySelectorAll('.opt-btn:not(.na).selected').forEach(b => {
+            b.classList.remove('selected', 'p2');
+            removeScoreRow(scoresArea, b.dataset.val);
+          });
+        } else {
+          // Non-NA: deselect any N/A that was selected
+          optionsEl.querySelectorAll('.opt-btn.na.selected').forEach(b => {
+            b.classList.remove('selected', 'p2');
+          });
+          // Add a score row for this direction
+          addScoreRow(scoresArea, val, key);
+        }
+        this.classList.add('selected', 'p2');
+      }
+
+      refreshBestHighlight(scoresArea);
+      calcKey();
+    });
+  });
+
+  // ── Score row helpers ─────────────────────────────────
+
+  function addScoreRow(area, val, key) {
+    const row = document.createElement('div');
+    row.className = 'score-multi-row';
+    row.dataset.scoreVal = val;
+    row.innerHTML = `
+      <span class="smr-label">${val}</span>
+      <span class="smr-best-badge">★ 最佳</span>
+      <input type="number" class="adj-score"
+             data-key="${key}" data-label="${val}"
+             min="0" max="10" placeholder="輸入分數" step="1">
+      <span class="score-unit">/ 10</span>
+      <span class="delta-badge"></span>
+    `;
+    const input = row.querySelector('.adj-score');
+    input.addEventListener('input', () => {
+      updateRowDelta(row, input);
+      refreshBestHighlight(area);
+      calcKey();
+    });
+    area.appendChild(row);
+  }
+
+  function removeScoreRow(area, val) {
+    const row = Array.from(area.querySelectorAll('.score-multi-row'))
+      .find(r => r.dataset.scoreVal === val);
+    if (!row) return;
+    row.classList.add('removing');
+    setTimeout(() => { row.remove(); calcKey(); }, 180);
+  }
+
+  function updateRowDelta(row, input) {
+    const badge = row.querySelector('.delta-badge');
+    const base  = parseFloat(document.getElementById('baseScore').value);
+    const adj   = parseFloat(input.value);
     if (isNaN(base) || isNaN(adj)) { badge.style.display = 'none'; return; }
     const diff = adj - base;
     badge.style.display = 'inline-block';
-    if (diff > 0) { badge.textContent = `+${diff} ↑`; badge.className = 'delta-badge up'; }
-    else if (diff < 0) { badge.textContent = `${diff} ↓`; badge.className = 'delta-badge down'; }
-    else { badge.textContent = '±0'; badge.className = 'delta-badge same'; }
-    calcKey();
+    if (diff > 0)      { badge.textContent = `+${diff} ↑`; badge.className = 'delta-badge up'; }
+    else if (diff < 0) { badge.textContent = `${diff} ↓`;  badge.className = 'delta-badge down'; }
+    else               { badge.textContent = '±0';          badge.className = 'delta-badge same'; }
   }
 
-  document.querySelectorAll('.adj-score').forEach(input => {
-    input.addEventListener('input', () => updateDelta(input));
-  });
-  document.getElementById('baseScore').addEventListener('input', () => {
-    document.querySelectorAll('.adj-score').forEach(i => updateDelta(i));
-  });
-
-  function calcKey() {
+  // Highlight the score row with the largest absolute delta (only when ≥2 rows)
+  function refreshBestHighlight(area) {
     const base = parseFloat(document.getElementById('baseScore').value);
-    if (isNaN(base)) return;
+    const rows = Array.from(area.querySelectorAll('.score-multi-row:not(.removing)'));
+    rows.forEach(r => r.classList.remove('best'));
+    if (rows.length < 2 || isNaN(base)) return;
 
-    let maxAbs = -1, maxKey = null, results = [];
-
-    document.querySelectorAll('.adj-score').forEach(input => {
-      const key = input.dataset.key;
-      const adj = parseFloat(input.value);
+    let bestRow = null, bestAbs = -1;
+    rows.forEach(row => {
+      const adj = parseFloat(row.querySelector('.adj-score')?.value);
       if (!isNaN(adj)) {
-        const diff = adj - base;
-        results.push({ key, diff });
-        if (Math.abs(diff) > maxAbs) { maxAbs = Math.abs(diff); maxKey = key; }
+        const abs = Math.abs(adj - base);
+        if (abs > bestAbs) { bestAbs = abs; bestRow = row; }
       }
     });
+    if (bestRow) bestRow.classList.add('best');
+  }
 
+  // Re-run deltas & highlights when base score changes
+  document.getElementById('baseScore').addEventListener('input', () => {
+    document.querySelectorAll('.p2-scores-area').forEach(area => {
+      area.querySelectorAll('.score-multi-row:not(.removing)').forEach(row => {
+        updateRowDelta(row, row.querySelector('.adj-score'));
+      });
+      refreshBestHighlight(area);
+    });
+    calcKey();
+  });
+
+  // ── Key result calculation ────────────────────────────
+
+  function calcKey() {
+    const base    = parseFloat(document.getElementById('baseScore').value);
     const display = document.getElementById('keyDisplay');
-    const note = document.getElementById('keyNote');
-    const table = document.getElementById('keyTable');
+    const note    = document.getElementById('keyNote');
+    const table   = document.getElementById('keyTable');
 
-    if (results.length === 0) {
-      display.textContent = '— 尚未輸入足夠資料 —';
-      note.textContent = '請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元';
-      table.innerHTML = '';
+    if (isNaN(base)) {
+      display.textContent = '— 請先設定基準分數 —';
+      note.textContent    = '請在上方輸入基準分數，再選擇調整方向並輸入各方向的分數';
+      table.innerHTML     = '';
       return;
     }
 
-    if (maxKey) {
-      const diff = results.find(r => r.key === maxKey).diff;
-      display.textContent = `${keyNames[maxKey]}（影響幅度：${diff > 0 ? '+' : ''}${diff} 分）`;
-      note.textContent = `此次感元的調整對個案的開心程度影響最顯著，建議優先以此項目設計介入策略`;
+    // Aggregate scores per key (exclude rows that are being animated away)
+    const byKey = {};
+    document.querySelectorAll('.p2-scores-area .score-multi-row:not(.removing)').forEach(row => {
+      const input = row.querySelector('.adj-score');
+      const key   = input?.dataset.key;
+      const label = row.dataset.scoreVal;
+      const adj   = parseFloat(input?.value);
+      if (key && !isNaN(adj)) {
+        if (!byKey[key]) byKey[key] = [];
+        byKey[key].push({ label, adj, diff: adj - base });
+      }
+    });
+
+    const results = Object.entries(byKey).map(([key, scores]) => {
+      const best = scores.reduce((a, b) =>
+        Math.abs(a.diff) >= Math.abs(b.diff) ? a : b
+      );
+      return { key, best, all: scores };
+    });
+
+    if (results.length === 0) {
+      display.textContent = '— 尚未輸入足夠資料 —';
+      note.textContent    = '請在第二階段選擇調整方向並輸入分數，系統將自動計算影響最大的次感元';
+      table.innerHTML     = '';
+      return;
     }
 
-    // Table of all results
-    results.sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff));
+    // Sort by absolute delta of best
+    results.sort((a, b) => Math.abs(b.best.diff) - Math.abs(a.best.diff));
+    const top    = results[0];
+    const topStr = top.best.diff > 0 ? `+${top.best.diff}` : `${top.best.diff}`;
+
+    display.textContent = `${keyNames[top.key]}（${top.best.label}：${topStr} 分）`;
+    note.textContent    = `「${top.best.label}」對開心程度影響最顯著（幅度 ${topStr} 分）`
+                        + `，建議優先以此次感元設計介入策略`;
+
+    // Build summary table
     table.innerHTML = results.map(r => {
-      const cls = r.diff > 0 ? 'up' : r.diff < 0 ? 'down' : 'none';
-      const arrow = r.diff > 0 ? '↑' : r.diff < 0 ? '↓' : '—';
+      const cls   = r.best.diff > 0 ? 'up' : r.best.diff < 0 ? 'down' : 'none';
+      const arrow = r.best.diff > 0 ? '↑'  : r.best.diff < 0 ? '↓'   : '—';
+      const dStr  = r.best.diff > 0 ? `+${r.best.diff}` : `${r.best.diff}`;
+      const star  = r.all.length > 1 ? ' <span class="kc-star">★</span>' : '';
+
+      const others = r.all.filter(s => s !== r.best).map(s => {
+        const sc = s.diff > 0 ? 'up' : s.diff < 0 ? 'down' : '';
+        const sa = s.diff > 0 ? '↑'  : s.diff < 0 ? '↓'   : '—';
+        const ds = s.diff > 0 ? `+${s.diff}` : `${s.diff}`;
+        return `<div class="kc-sub ${sc}">${s.label}：${ds} ${sa}</div>`;
+      }).join('');
+
       return `<div class="key-cell">
         <div class="kc-name">${keyNames[r.key]}</div>
-        <div class="kc-delta ${cls}">${r.diff > 0 ? '+' : ''}${r.diff} ${arrow}</div>
+        <div class="kc-best-dir">${r.best.label}</div>
+        <div class="kc-delta ${cls}">${dStr} ${arrow}${star}</div>
+        ${others}
       </div>`;
     }).join('');
   }
 
+  // ── Clear all ─────────────────────────────────────────
   function clearAll() {
     if (!confirm('確定要清除所有已填寫的資料嗎？')) return;
     document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected','p1','p2'));
-    document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(i => i.value = '');
+    document.querySelectorAll('input[type="text"], input[type="number"], textarea')
+      .forEach(i => i.value = '');
     document.getElementById('dateField').valueAsDate = new Date();
+    document.querySelectorAll('.p2-scores-area').forEach(area => area.innerHTML = '');
     document.getElementById('keyDisplay').textContent = '— 尚未輸入足夠資料 —';
-    document.getElementById('keyNote').textContent = '請在第二階段輸入調整後分數，系統將自動計算影響最大的次感元';
-    document.getElementById('keyTable').innerHTML = '';
-    document.querySelectorAll('.delta-badge').forEach(b => b.style.display = 'none');
+    document.getElementById('keyNote').textContent    = '請在第二階段選擇調整方向並輸入分數，系統將自動計算影響最大的次感元';
+    document.getElementById('keyTable').innerHTML     = '';
   }
 </script>
 </body>
