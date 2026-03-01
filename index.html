@@ -1299,12 +1299,22 @@
 
     // Sort by absolute delta of best
     results.sort((a, b) => Math.abs(b.best.diff) - Math.abs(a.best.diff));
-    const top    = results[0];
-    const topStr = top.best.diff > 0 ? `+${top.best.diff}` : `${top.best.diff}`;
+    const maxDelta = Math.abs(results[0].best.diff);
+    const tops     = results.filter(r => Math.abs(r.best.diff) === maxDelta);
+    const fmtDiff  = d => d > 0 ? `+${d}` : `${d}`;
 
-    display.textContent = `${keyNames[top.key]}（${top.best.label}：${topStr} 分）`;
-    note.textContent    = `「${top.best.label}」對開心程度影響最顯著（幅度 ${topStr} 分）`
-                        + `，建議優先以此次感元設計介入策略`;
+    if (tops.length === 1) {
+      const top = tops[0];
+      display.textContent = `${keyNames[top.key]}（${top.best.label}：${fmtDiff(top.best.diff)} 分）`;
+      note.textContent    = `「${top.best.label}」對開心程度影響最顯著（幅度 ${fmtDiff(top.best.diff)} 分）`
+                          + `，建議優先以此次感元設計介入策略`;
+    } else {
+      display.innerHTML = tops.map(t =>
+        `${keyNames[t.key]}（${t.best.label}：${fmtDiff(t.best.diff)} 分）`
+      ).join('<br>');
+      note.textContent = `以下 ${tops.length} 個次感元影響幅度相同（${fmtDiff(tops[0].best.diff)} 分），建議逐一評估：`
+                       + tops.map(t => `「${keyNames[t.key]}・${t.best.label}」`).join('、');
+    }
 
     // Build summary table
     table.innerHTML = results.map(r => {
